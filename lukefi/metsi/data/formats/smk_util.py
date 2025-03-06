@@ -32,12 +32,17 @@ def generate_stand_identifier(xml_stand: Element) -> str:
     stand_identifier = xml_stand.attrib.get('id')
     stand_number = xml_stand.findtext('./st:StandBasicData/st:StandNumber', None, NS)
     stand_number_extension = xml_stand.findtext('./st:StandBasicData/st:StandNumberExtension', None, NS)
+    '''
+
+    THIS HAS BEEN COMMENTED OUT TO RETURN THE STAND ID AS THE IDENTIFIER
+
     if stand_number and stand_number_extension:
         return f"{stand_number}.{stand_number_extension}"
     elif stand_number:
         return stand_number
     elif stand_identifier:
-        return stand_identifier
+    '''
+    return stand_identifier
 
 
 def parse_stand_basic_data(xml_stand: Element) -> SimpleNamespace:
