@@ -5,16 +5,19 @@ Arguments:
         Defaults to 'C:/MyTemp/code/UTOPIA/alternatives/select'.
 """
 
-import argparse
 import json
+import os
 from pathlib import Path
 from sys import platform
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-d", dest="dir", default="C:/MyTemp/code/UTOPIA/alternatives/select")
-    args = parser.parse_args()
-    data_dir = args.dir
+class TreeJsonException(Exception):
+    '''
+    '''
+
+def write_trees_json(data_dir: str):
+
+    if not os.path.exists(f"{data_dir}/trees.txt"):
+        raise TreeJsonException(f"There is no \"trees.txt\" in {data_dir}") 	
 
     # read tree data from file to python lists to be looped through
     line_lengths = []
@@ -89,3 +92,14 @@ if __name__ == "__main__":
     if platform == "linux":
         with Path(f"{data_dir}/trees.json").open(mode="w") as f:
             json.dump(trees, f)
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", dest="dir", default="C:/MyTemp/code/UTOPIA/alternatives/select")
+    args = parser.parse_args()
+    data_dir = args.dir
+
+    write_trees_json(data_dir)
+

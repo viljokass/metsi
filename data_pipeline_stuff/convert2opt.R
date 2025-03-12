@@ -221,28 +221,50 @@ for (i in unique(data$identifier)) {
   # Append the schedule numbers to the schedule number vector
   # For each entry in the data, whose identifier is the current i,
   # return the data table indices as a vector, get the length of that vector and -1 from that,
-  # and use the result of that to get the end of the schedule indices.
+  # and use the result of that to get the end of the schedule indices to the 0:X operation
   schs <- c(schs, 0:(length(which(data$identifier==i))-1))
 
   # index 18 is where harvests that do something start
   # index 32 is where harvests that do something end
+
+  # For each entry in the data, check if row's identifier is i -> vector
+	# Use that vector to index the data, with the vector as row id and 18:32 as column ids
+	# Create rowsums and if a rowsum equals 0, that row is added to variable iiin.
   iiin <- names(which(rowSums(data[which(data$identifier==i),18:32])==0))
+  
+  # If iiin's length is more than 1, append the id's to invalids, aside from the first one. The first one can be zero because of "donothing".
   if (length(iiin)>1) {
     invalids <- c(invalids, iiin[-1])
   }
 
+	# ------------------------
+
+	# Determine schedules.
+	
   # schedule 0 no mgmt
   sepss <- c("donothing")
+
+	# schedules onward from there
+	# For each schedule (for all the lines under certain identifier) aside from the first one
   for (di in 2:length(which(data$identifier==i))) {
+
+		# Collect treatment names for all treatments, in which for specific treatment number, the harvest values are more than zero, to cur.nmn
     cur.nmn <- names(data)[18:32][which(data[which(data$identifier==i)[di],18:32]>0)]
+
+		# init seps
     seps <- NULL
-    for (nmn in cur.nmn) {  
+
+		# For each treatment in the name collection
+    for (nmn in cur.nmn) {
+			# if seps is null, id est if the collection only has one treatment in it  
       if (is.null(seps)) {
         seps <- strsplit(nmn,"harvest_value_")[[1]][2]
+			# otherwise, append the other treatment to the first treatment(s)
       } else {
         seps <- paste(seps, strsplit(nmn,"harvest_value_")[[1]][2], sep=" + ")
       }
     }
+		# append the treatment key to treatment matrix/vector
     sepss <- rbind(sepss,seps)
   }
   if (is.null(sepsss)) {
@@ -252,26 +274,36 @@ for (i in unique(data$identifier)) {
   }
 }
 
+# If there are invalid treatments, filter them out of data.
+# Regardless, create a table, almost as seen in alternatives_key.csv, with the distinction of area instead of treatment number
 if(length(invalids)>0) {
   bdata <- cbind(count, data[-as.numeric(invalids),c(1:2)], sepsss)
 } else {
   bdata <- cbind(count, data[,c(1:2)], sepsss)
 }
 
+# As above, filter invalid treatments out.
+# Add the treatment number column and the names for the column.
 if(length(invalids)>0) {
   bdata[,3] <- schs[-as.numeric(invalids)]
 } else {
   bdata[,3] <- schs
 }
+# Give the columns names
 names(bdata) <- c("holding", "unit", "schedule", "treatment")
 
 # indices 1-11 are the id, area, net present values and total volumes (of all trees together)
 # 15-17 are total harvest values from the cutting years (2, 7, 17)
 # 33-184 are the total volumes for each tree species
+
+# This is kinda easy - just filter stuff
 sdata <- cbind(count, data[,c(1:11, 15:17, 33:184)])
 sdata[,3] <- schs
+# Give the rest of the columns a name
 names(sdata)[c(1:3)] <- c("holding", "unit", "schedule")
 
+# This number stuff is kinda weird, what's it used for?
+# Anyway, if count == 1, init write data, otherwise append to it
 if (count==1) { 
   sdatas <- sdata
   bdatas <- bdata
@@ -280,8 +312,10 @@ if (count==1) {
   bdatas <- rbind(bdatas, bdata)
 }
 
+# Increment number (useless as of now)
 count <- count + 1
 
+# Write the files into .csv files.
 write.table(bdatas, "alternatives_key.csv", quote=F, row.names=F, sep=",")
 write.table(sdatas, "alternatives.csv", quote=F, row.names=F, sep=",")
  

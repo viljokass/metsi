@@ -67,6 +67,10 @@ from sys import platform
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
+from convert_to_opt import convert_to_opt
+from write_trees_json import write_trees_json
+from write_carbon_json import write_carbon_json
+
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import requests
@@ -629,27 +633,17 @@ if __name__ == "__main__":
         if res.stderr:
             raise PipelineError("Error when running metsi: " + res.stderr.decode())
 
-        # run the R script to convert the simulation output to csv for optimization purposes
-        # TODO: hardcode the correct location of the R file or add that as an argument to this python script
+        # Convert the simulation output to CSV for optimization purposes
         print(f"Converting metsi output to CSV for {realestateid}...")
-        res = subprocess.run(f"Rscript data_pipeline_stuff/convert2opt.R {realestate_dir}", capture_output=True, shell=True)
-        if res.stderr:
-            raise PipelineError("Error converting simulation data to usable CSV: " + res.stderr.decode())
+        convert_to_opt(f"{realestate_dir}", 1)
 
-        # run a python script to convert trees.txt into a more usable format
-        # TODO: hardcode the correct location of the write_trees_json.py file or add that as an argument to this python script
+        # Covnert trees.txt to a more usable format
         print(f"Converting trees.txt to trees.json for {realestateid}...")
-        res = subprocess.run(f"python data_pipeline_stuff/write_trees_json.py -d {realestate_dir}", capture_output=True, shell=True)
-        if res.stderr:
-            raise PipelineError("Error when writing trees.json: " + res.stderr.decode())
+        write_trees_json(realestate_dir)
 
-        # compute CO2 and write them into a json file to be used to form an optimization problem
-        # NOTE: This is veeeeeery slow
-        # TODO: hardcode the correct location of the write_carbon_json.py file or add that as an argument to this python script
+        # Compute CO2 and write them into a json file for optimization problems
         print(f"Writing carbon.json for {realestateid}...")
-        res = subprocess.run(f"python data_pipeline_stuff/write_carbon_json.py -d {realestate_dir}", capture_output=True, shell=True)
-        if res.stderr:
-            raise PipelineError("Error when writing carbon.json: " + res.stderr.decode())
+        write_carbon_json(realestate_dir)
 
         # read the alternatives from the CSV file and add the contents to the python variable
         if platform == "win32":

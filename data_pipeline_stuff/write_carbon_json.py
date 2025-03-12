@@ -8,19 +8,29 @@ Arguments:
         Defaults to 'C:/MyTemp/code/UTOPIA/alternatives/select'.
 """
 
-import argparse
+
 import json
+import os
 from pathlib import Path
 from sys import platform
 
 import numpy as np
 import polars as pl
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-d", dest="dir", default="C:/MyTemp/code/UTOPIA/alternatives/select")
-    args = parser.parse_args()
-    data_dir = args.dir
+class CarbonJsonException(Exception):
+    '''
+    '''
+
+def write_carbon_json(data_dir: str):
+
+    if not os.path.exists(f"{data_dir}/alternatives.csv"):
+        raise CarbonJsonException(f"There's no alternatives.csv in {data_dir}")
+	
+    if not os.path.exists(f"{data_dir}/alternatives_key.csv"):
+        raise CarbonJsonException(f"There's no alternatives_key.csv in {data_dir}")
+	
+    if not os.path.exists(f"{data_dir}/trees.json"):
+        raise CarbonJsonException(f"There's no trees.json in {data_dir}")
 
     # reading the csv files, infer_schema_length's high number makes it slower but is necessary
     df = pl.read_csv(Path(f"{data_dir}/alternatives.csv"), schema_overrides={"unit": pl.Float64}, infer_schema_length=10000)
@@ -115,3 +125,14 @@ if __name__ == "__main__":
     if platform == "linux":
         with Path(f"{data_dir}/carbon.json").open(mode="w") as f:
             json.dump(carbon_storage_per_unit, f)
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", dest="dir", default="C:/MyTemp/code/UTOPIA/alternatives/select")
+    args = parser.parse_args()
+    data_dir = args.dir
+
+    write_carbon_json(data_dir)
