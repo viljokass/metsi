@@ -323,8 +323,8 @@ def convert_to_opt(data_dir: str, usernum: int):
             pl.Int64,
             strict=True))
 
-    # Multiply columns 7 to w with the area column.
-    df = df.with_columns((pl.nth(range(7, w)) * pl.nth(1)))
+    # Multiply columns 2 to w with the area column.
+    df = df.with_columns((pl.nth(range(2, w)) * pl.nth(1)))
 
     # Name the columns
     df = df.rename(

@@ -38,11 +38,11 @@ operation_params:
   report_collectives:
     - identifier: identifier
       area: area
-      npv_1_percent: net_present_value.value[(net_present_value.interest_rate==1) & (net_present_value.time_point == 25)]
-      npv_2_percent: net_present_value.value[(net_present_value.interest_rate==2) & (net_present_value.time_point == 25)]
-      npv_3_percent: net_present_value.value[(net_present_value.interest_rate==3) & (net_present_value.time_point == 25)]
-      npv_4_percent: net_present_value.value[(net_present_value.interest_rate==4) & (net_present_value.time_point == 25)]
-      npv_5_percent: net_present_value.value[(net_present_value.interest_rate==5) & (net_present_value.time_point == 25)]
+      npv_1_percent: net_present_value.value[(net_present_value.interest_rate==1) & (net_present_value.time_point == 30)]
+      npv_2_percent: net_present_value.value[(net_present_value.interest_rate==2) & (net_present_value.time_point == 30)]
+      npv_3_percent: net_present_value.value[(net_present_value.interest_rate==3) & (net_present_value.time_point == 30)]
+      npv_4_percent: net_present_value.value[(net_present_value.interest_rate==4) & (net_present_value.time_point == 30)]
+      npv_5_percent: net_present_value.value[(net_present_value.interest_rate==5) & (net_present_value.time_point == 30)]
 
       # stock volumes at state years
       stock_0: cross_cutting.volume_per_ha[(cross_cutting.source == "standing") & (cross_cutting.time_point == 0)]
@@ -389,7 +389,7 @@ simulation_events:
     generators:
       - sequence:
           - planting
-  - time_points: [0, 5, 10, 15, 20, 25]
+  - time_points: [0, 5, 10, 15, 20, 25, 30]
     generators:
       - sequence:
           - cross_cut_standing_trees
@@ -419,7 +419,7 @@ simulation_events:
     generators:
       - sequence:
           - report_period
-  - time_points: [25]
+  - time_points: [30]
     generators:
       - sequence:
           - report_collectives
