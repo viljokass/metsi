@@ -1,3 +1,9 @@
+# NOTE
+This is an old version of metsi from before [LUKE](https://github.com/lukefi) made metsi private for figuring out the licenses. 
+In our use in the [UTOPIA](https://github.com/viljokass/UTOPIA) tool, we do not utilize the grow_metsi that requires a different 
+license, discussed [here](https://github.com/lukefi/metsi?tab=readme-ov-file#metsi-mpl-20). Our use is not commercial, anyway. We 
+might be forking the newest version of metsi in the future and continue working with that. If you have comments on this, please let [me](https://github.com/viljokass) know.
+
 # Metsi forestry simulator
 
 Metsi forestry simulator is a Python based forest growth and maintenance operation simulator developed in Natural
